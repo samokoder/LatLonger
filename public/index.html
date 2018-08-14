@@ -52,13 +52,13 @@
               {{ currentAddress.address }}
             </div>
 
-            <button v-on:click="saveItem">
+            <button class="button" v-on:click="saveItem">
               OK
             </button>
-            <button v-on:click="defectItem">
+            <button class="button" v-on:click="defectItem">
               Defect
             </button>
-            <button v-on:click="cancelItem">
+            <button class="button" v-on:click="cancelItem">
               Cancel
             </button>
           </div>
@@ -79,8 +79,14 @@
           </div>
 
           <div>
-            <button v-on:click="prevPage" :disabled="page === pagination.first">Prev</button>
-            <button v-on:click="nextPage" :disabled="page === pagination.last">Next</button>
+            <button
+              class="button"
+              v-on:click="prevPage"
+              v-bind:disabled="page === pagination.first">Prev</button>
+            <button
+              class="button"
+              v-on:click="nextPage"
+              v-bind:disabled="page === pagination.last">Next</button>
           </div>
         </div>
       </div>
