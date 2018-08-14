@@ -352,6 +352,24 @@
         center: [55.76, 37.64],
         zoom: 10
       });
+
+      window.addrMap.events.add('click', e => {
+        if (!window.addrMap.balloon.isOpen()) {
+          const coords = e.get('coords');
+          console.log(coords);
+
+          window.addrMap.balloon.open(coords, {
+            contentHeader: 'Clicked!',
+            contentBody: `<p>Clicked at:
+              <super>
+                ${coords.join(',g')}
+              </super>
+              </p>`
+          });
+        } else {
+          window.addrMap.balloon.close();
+        }
+      });
     });
   </script>
 </body>
