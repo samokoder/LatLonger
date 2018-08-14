@@ -124,12 +124,34 @@
       methods: {
         saveItem() {
           console.log('OK');
+
+          this.checkCurrentAddress();
+
           this.isEditMode = false;
         },
 
+        checkCurrentAddress() {
+          const id = this.currentAddress.id;
+
+          this.addresses = this.addresses.map(a => {
+            if (a.id === id) {
+              Vue.set(a, 'checked', true);
+            }
+            return a;
+          });
+
+          console.log(this.addresses);
+        },
+
         defectItem() {
-          console.warn('defective address');
-          this.isEditMode = false;
+          const id = this.currentAddress.id;
+
+          this.addresses = this.addresses.map(a => {
+            if (a.id === id) {
+              Vue.set(a, 'defective', true);
+            }
+            return a;
+          });
         },
 
         cancelItem() {
