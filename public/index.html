@@ -66,6 +66,15 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
 
+  <script type="text/x-template" id="address-item-template">
+    <a class="panel-block no-user-select"
+      v-on:click.prevent="setPoint"
+      v-bind:style="addressItemStyle">
+
+      {{ address_title }}
+    </a>
+  </script>
+
   <script>
     const app = new Vue({
       el: '#app',
@@ -87,6 +96,62 @@
           console.log(address);
         },
       },
+    });
+
+
+
+    Vue.component('address-item', {
+      name: 'AddressItem',
+
+      template: '#address-item-template',
+
+      props: {
+        address: {
+          type: Object,
+          required: true
+        }
+      },
+
+      computed: {
+        address_title() {
+          return `${this.address.name} #${this.address.id}`;
+        },
+
+        addressItemStyle() {
+          const hasLonLat = !!this.address.lonlat;
+          const checked = this.address.checked;
+          const defective = this.address.defective;
+
+          const result = {
+            backgroundColor: 'red'
+          };
+
+          if (checked) {
+            result.backgroundColor = 'lightgreen';
+          } else if (hasLonLat) {
+            result.backgroundColor = 'yellow';
+          }
+
+          if (defective) {
+            result.backgroundColor = 'gray';
+            result.opacity = 0.7;
+            result.cursor = 'no-drop';
+          }
+
+          return result;
+        }
+      },
+
+      methods: {
+        setPoint() {
+          if (this.address.defective) {
+            console.warn('defective address');
+            return;
+          }
+
+          this.$emit('set-point', this.address);
+        }
+      }
     });
 
     // init map
