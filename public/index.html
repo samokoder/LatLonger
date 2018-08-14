@@ -122,10 +122,6 @@
       },
 
       methods: {
-        setPoint(address) {
-          console.log(address);
-        },
-
         saveItem() {
           console.log('OK');
           this.isEditMode = false;
@@ -139,6 +135,57 @@
         cancelItem() {
           console.log('Cancel');
           this.isEditMode = false;
+        },
+
+        setMapObject(coords) {
+          const point = new window.ymaps.Placemark(coords);
+
+          window.addrMap.geoObjects.add(point);
+
+          window.addrMap.setCenter(coords);
+          window.addrMap.setZoom(16);
+        },
+
+        clearMapObjects() {
+          window.addrMap.geoObjects.removeAll();
+        },
+
+        queryAddressPos(address) {
+          const addr = [];
+
+          if (address.city) {
+            addr.push(address.city);
+          }
+
+          if (address.street) {
+            addr.push(address.street);
+          }
+
+          if (address.housing && address.house) {
+            addr.push(`д. ${address.house} / ${address.housing}`);
+          } else if (address.house) {
+            addr.push(`д. ${address.house}`);
+          }
+
+          window.ymaps.geocode(addr.join(', '))
+            .then(res => {
+              console.log(`Found ${res.geoObjects.getLength()} results`);
+
+              var firstGeoObject = res.geoObjects.get(0),
+                  // Координаты геообъекта.
+                  coords = firstGeoObject.geometry.getCoordinates(),
+                  // Область видимости геообъекта.
+                  bounds = firstGeoObject.properties.get('boundedBy');
+
+
+              this.currentAddress.lonlat = coords.slice().reverse().join(',');
+
+              this.setMapObject(coords);
+
+              console.log(firstGeoObject);
+              console.log(coords);
+              console.log(bounds);
+            })
         },
 
         getPage() {
@@ -168,6 +215,20 @@
         prevPage() {
           this.page--;
           this.getPage();
+        },
+
+        setPoint(address) {
+          this.currentAddress = address;
+          this.isEditMode = true;
+
+          // clear points
+          this.clearMapObjects();
+
+          if (address.lonlat) {
+            this.setMapObject(address.lonlat.split(',').reverse());
+          } else {
+            this.queryAddressPos(address.address);
+          }
         }
       }
     });
