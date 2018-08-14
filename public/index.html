@@ -42,7 +42,25 @@
         <div class="column is-half">
           <div class="box" id="map">
             <!-- map is loading <span class="loader"></span> -->
+          </div>
 
+          <div class="box edit-form" v-show="isEditMode">
+            <div>{{ currentAddress.name }}</div>
+            <div>{{ currentAddress.lonlat || '???' }}</div>
+
+            <div>
+              {{ currentAddress.address }}
+            </div>
+
+            <button v-on:click="saveItem">
+              OK
+            </button>
+            <button v-on:click="defectItem">
+              Defect
+            </button>
+            <button v-on:click="cancelItem">
+              Cancel
+            </button>
           </div>
         </div>
 
@@ -90,6 +108,10 @@
       data: {
         addresses: [],
 
+        isEditMode: false,
+
+        currentAddress: {},
+
         pagination: {},
 
         page: 1
@@ -102,6 +124,21 @@
       methods: {
         setPoint(address) {
           console.log(address);
+        },
+
+        saveItem() {
+          console.log('OK');
+          this.isEditMode = false;
+        },
+
+        defectItem() {
+          console.warn('defective address');
+          this.isEditMode = false;
+        },
+
+        cancelItem() {
+          console.log('Cancel');
+          this.isEditMode = false;
         },
 
         getPage() {
@@ -134,7 +171,6 @@
         }
       }
     });
-
 
 
     Vue.component('address-item', {
