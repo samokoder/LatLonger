@@ -55,6 +55,15 @@
               v-bind:address="address"
               v-on:set-point="setPoint"></address-item>
           </nav>
+
+          <div>
+            {{ pagination }}
+          </div>
+
+          <div>
+            <button v-on:click="prevPage" :disabled="page === pagination.first">Prev</button>
+            <button v-on:click="nextPage" :disabled="page === pagination.last">Next</button>
+          </div>
         </div>
       </div>
     </div>
@@ -80,21 +89,50 @@
 
       data: {
         addresses: [],
+
+        pagination: {},
+
+        page: 1
       },
 
       mounted() {
-        fetch('/addresses')
-          .then(data => data.json())
-          .then(data => {
-            this.addresses = data;
-          });
+        this.getPage();
       },
 
       methods: {
         setPoint(address) {
           console.log(address);
         },
-      },
+
+        getPage() {
+          fetch(`/addresses?_page=${this.page}&_sort=id`)
+            .then(data => {
+
+              this.pagination = data.headers.get('Link').split(',')
+                .reduce((res, x) => {
+                  const y = x.match(/_page=(\d+).+\"(\w+)\"/);
+                  const [ , val, key ] = y; // destruct arr
+                  res[ key ] = parseInt(val, 10);
+                  return res;
+                }, {});
+
+              return data.json();
+            })
+            .then(data => {
+              this.addresses = data;
+            });
+        },
+
+        nextPage() {
+          this.page++;
+          this.getPage();
+        },
+
+        prevPage() {
+          this.page--;
+          this.getPage();
+        }
+      }
     });
 
 
