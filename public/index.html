@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Address Fixer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+  <style>
+    #map {
+      width: 400px;
+      height: 300px;
+
+      padding: 0;
+    }
+
+    #map .loader {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>  
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Fix addresses</h1>
+
+      <div id="app" class="columns">
+        <div class="column is-half">
+          <div class="box" id="map">
+            <!-- map is loading <span class="loader"></span> -->
+
+          </div>
+        </div>
+
+        <div class="column">
+          <nav class="panel">
+            <p class="panel-heading">Address List</p>
+            <a class="panel-block"
+                v-for="address in addresses"
+                v-bind:key="address.id"
+                v-on:click="setPoint(address)">
+              {{ address.title }}
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- scripts -->
+  <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+
+      data: {
+        addresses: [],
+      },
+
+      mounted() {
+        fetch('/addresses')
+          .then(data => data.json())
+          .then(data => {
+            this.addresses = data;
+          });
+      },
+
+      methods: {
+        setPoint(address) {
+          console.log(address);
+        },
+      },
+    });
+
+    // init map
+    ymaps.ready(function() {
+      window.addrMap = new ymaps.Map('map', {
+        center: [55.76, 37.64],
+        zoom: 7
+      });
+    });
+  </script>
+</body>
+</html>
