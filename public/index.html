@@ -146,11 +146,16 @@
             return a;
           });
 
-          console.log(this.addresses);
+          const addrObj = this.addresses
+            .filter(a => a.id === id)
+            .shift();
+
+          this.updateAddressItem(addrObj);
         },
 
         defectItem() {
           const id = this.currentAddress.id;
+
 
           this.addresses = this.addresses.map(a => {
             if (a.id === id) {
@@ -158,11 +163,35 @@
             }
             return a;
           });
+
+          const addrObj = this.addresses
+            .filter(a => a.id === id)
+            .shift();
+
+          this.updateAddressItem(addrObj);
         },
 
         cancelItem() {
           console.log('Cancel');
           this.isEditMode = false;
+        },
+
+        updateAddressItem(address) {
+          const req = new Request(`/addresses/${address.id}`,
+            {
+              method: 'PUT',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(address)
+            });
+
+          fetch(req)
+            .then(data => data.json())
+            .then(data => {
+              console.log(data);
+            });
         },
 
         setMapObject(coords) {
